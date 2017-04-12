@@ -110,21 +110,27 @@ substitute z (x:xs) ys
     | z == x = ys ++ (substitute z xs ys)
     | xs == [] = x:[]
     | otherwise = x:(substitute z xs ys)
-{- TO BE WRITTEN -}
+
 
 
 -- Tries to match two lists. If they match, the result consists of the sublist
 -- bound to the wildcard in the pattern list.
 match :: Eq a => a -> [a] -> [a] -> Maybe [a]
-match _ _ _ = Nothing
+match _ [] [] = Just []
+match _ [] _ = Nothing
+match _ _ [] = Nothing
+match wildcard (x:xs) (y:ys)
+    | wildcard `elem` (y:ys) = error "wildcard is not allowed to be element of match list"
+    | wildcard == x = orElse (singleWildcardMatch(x:xs) (y:ys)) (longerWildcardMatch(x:xs) (y:ys))
+    | otherwise = if(x==y) then match wildcard xs ys else Nothing
+--match _ _ _ = Nothing
 {- TO BE WRITTEN -}
 
 
 -- Helper function to match
 singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
-singleWildcardMatch (wc:ps) (x:xs) = Nothing
-{- TO BE WRITTEN -}
-longerWildcardMatch (wc:ps) (x:xs) = Nothing
+singleWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc ps xs)
+longerWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc (wc:ps) xs)
 {- TO BE WRITTEN -}
 
 
