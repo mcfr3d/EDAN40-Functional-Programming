@@ -123,15 +123,14 @@ match wildcard (x:xs) (y:ys)
     | wildcard `elem` (y:ys) = error "wildcard is not allowed to be element of match list"
     | wildcard == x = orElse (singleWildcardMatch(x:xs) (y:ys)) (longerWildcardMatch(x:xs) (y:ys))
     | otherwise = if(x==y) then match wildcard xs ys else Nothing
---match _ _ _ = Nothing
-{- TO BE WRITTEN -}
+
 
 
 -- Helper function to match
 singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
 singleWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc ps xs)
 longerWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc (wc:ps) xs)
-{- TO BE WRITTEN -}
+
 
 
 
