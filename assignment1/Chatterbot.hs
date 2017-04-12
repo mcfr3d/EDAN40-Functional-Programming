@@ -105,7 +105,11 @@ reductionsApply _ = id
 
 -- Replaces a wildcard in a list with the list given as the third argument
 substitute :: Eq a => a -> [a] -> [a] -> [a]
-substitute _ _ _ = []
+substitute _ [] _ = []
+substitute z (x:xs) ys 
+    | z == x = ys ++ (substitute z xs ys)
+    | xs == [] = x:[]
+    | otherwise = x:(substitute z xs ys)
 {- TO BE WRITTEN -}
 
 
