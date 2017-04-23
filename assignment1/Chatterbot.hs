@@ -156,6 +156,8 @@ matchCheck = matchTest == Just testSubstitutions
 transformationApply :: Eq a => a -> ([a] -> [a]) -> [a] -> ([a], [a]) -> Maybe [a]
 transformationApply _ _ _ _ = Nothing
 {- TO BE WRITTEN -}
+--transformationApply :: Eq a => a -> ([a] -> [a]) -> [a] -> ([a], [a]) -> Maybe [a]
+--transformationApply wc f y (a,b) = substitute $ wc b mmap(f match(wc a y))
 
 
 -- Applying a list of patterns until one succeeds
