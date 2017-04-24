@@ -34,12 +34,9 @@ rulesApply :: [PhrasePair] -> Phrase -> Phrase
 rulesApply _ = id
 
 reflect :: Phrase -> Phrase
-{- TO BE WRITTEN -}
---reflect = id
 reflect [] = []
 reflect (x:xs)
-    | x `elem` (map fst reflections) = ((head [snd b | b <-reflections, x== fst b]):) $reflect xs
-    | x `elem` (map snd reflections) =((head [fst b | b <- reflections, x== snd b]):) $reflect xs
+    | x `elem` (map fst reflections) = [snd b | b <-reflections, x== fst b] ++ reflect xs
     | otherwise = (x:) $reflect xs
 
 reflections =
