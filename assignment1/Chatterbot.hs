@@ -31,7 +31,10 @@ stateOfMind _ = return id
 
 rulesApply :: [PhrasePair] -> Phrase -> Phrase
 {- TO BE WRITTEN -}
-rulesApply _ = id
+--rulesApply _ = id
+rulesApply phrasepairs phrase
+    | transformationsApply "*" reflect phrasepairs phrase == Nothing = []
+    | otherwise = try (transformationsApply "*" reflect phrasepairs) phrase
 
 reflect :: Phrase -> Phrase
 reflect [] = []
