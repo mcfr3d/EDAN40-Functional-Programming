@@ -35,7 +35,12 @@ rulesApply _ = id
 
 reflect :: Phrase -> Phrase
 {- TO BE WRITTEN -}
-reflect = id
+--reflect = id
+reflect [] = []
+reflect (x:xs)
+    | x `elem` (map fst reflections) = ((head [snd b | b <-reflections, x== fst b]):) $reflect xs
+    | x `elem` (map snd reflections) =((head [fst b | b <- reflections, x== snd b]):) $reflect xs
+    | otherwise = (x:) $reflect xs
 
 reflections =
   [ ("am",     "are"),
