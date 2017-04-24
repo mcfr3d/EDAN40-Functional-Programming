@@ -121,14 +121,14 @@ match _ [] _ = Nothing
 match _ _ [] = Nothing
 match wildcard (x:xs) (y:ys)
     | wildcard `elem` (y:ys) = error "wildcard is not allowed to be element of match list"
-    | wildcard == x = orElse (singleWildcardMatch(x:xs) (y:ys)) (longerWildcardMatch(x:xs) (y:ys))
+    | wildcard == x = orElse (singleWildcardMatch (x:xs) (y:ys)) (longerWildcardMatch (x:xs) (y:ys))
     | otherwise = if(x==y) then match wildcard xs ys else Nothing
 
 
 
 -- Helper function to match
 singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
-singleWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc ps xs)
+singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs)
 longerWildcardMatch (wc:ps) (x:xs) = mmap (x:) (match wc (wc:ps) xs)
 
 
@@ -154,15 +154,12 @@ matchCheck = matchTest == Just testSubstitutions
 
 -- Applying a single pattern
 transformationApply :: Eq a => a -> ([a] -> [a]) -> [a] -> ([a], [a]) -> Maybe [a]
-transformationApply _ _ _ _ = Nothing
-{- TO BE WRITTEN -}
---transformationApply :: Eq a => a -> ([a] -> [a]) -> [a] -> ([a], [a]) -> Maybe [a]
---transformationApply wc f y (a,b) = substitute $ wc b mmap(f match(wc a y))
+transformationApply wc f y (a,b) = mmap (substitute wc b) $mmap f (match wc a y)
 
 
 -- Applying a list of patterns until one succeeds
 transformationsApply :: Eq a => a -> ([a] -> [a]) -> [([a], [a])] -> [a] -> Maybe [a]
-transformationsApply _ _ _ _ = Nothing
-{- TO BE WRITTEN -}
+transformationsApply _ _ [] _ = Nothing
+transformationsApply wc f (p:ps) y = orElse (transformationApply wc f y p) (transformationsApply wc f ps y)
 
 
