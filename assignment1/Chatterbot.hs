@@ -99,8 +99,7 @@ reduce :: Phrase -> Phrase
 reduce = reductionsApply reductions
 
 reductionsApply :: [PhrasePair] -> Phrase -> Phrase
-{- TO BE WRITTEN -}
-reductionsApply _ = id
+reductionsApply phrasepairs = fix $try $transformationsApply "*" id phrasepairs
 
 
 -------------------------------------------------------
