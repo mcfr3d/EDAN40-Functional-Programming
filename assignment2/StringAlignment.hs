@@ -7,7 +7,13 @@ scoreSpace = -1
 type AlignmentType = (String,String)
 
 optAlignments :: String -> String -> [AlignmentType]
-optAlignments (x:xs) (y:ys) =  
+optAlignments [] _ = [("","")]
+optAlignments _ [] = [("","")]
+optAlignments (x:xs) (y:ys) = maximaBy (uncurry similarityScore) $match++xSpacematch++ySpacematch
+    where match = attachHeads x y $ optAlignments xs ys
+          xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
+          ySpacematch = attachHeads '-' y $optAlignments (x:xs) ys
+
 
 
 
