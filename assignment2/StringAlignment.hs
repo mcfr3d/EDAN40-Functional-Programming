@@ -7,8 +7,9 @@ scoreSpace = -1
 type AlignmentType = (String,String)
 
 optAlignments :: String -> String -> [AlignmentType]
-optAlignments [] _ = [("","")]
-optAlignments _ [] = [("","")]
+optAlignments [][] = [("","")]
+optAlignments (x:xs) [] = attachHeads x '-' (optAlignments xs "")
+optAlignments [] (y:ys) = attachHeads '-' y (optAlignments "" ys)
 optAlignments (x:xs) (y:ys) = maximaBy (uncurry similarityScore) $match++xSpacematch++ySpacematch
     where match = attachHeads x y $ optAlignments xs ys
           xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
@@ -16,10 +17,10 @@ optAlignments (x:xs) (y:ys) = maximaBy (uncurry similarityScore) $match++xSpacem
 
 
 
-
 similarityScore :: String -> String -> Int
-similarityScore [] _ = scoreSpace
-similarityScore _ [] = scoreSpace
+similarityScore [][] = 0
+similarityScore xs [] = scoreSpace * length xs
+similarityScore [] ys = scoreSpace * length ys
 similarityScore (x:xs) (y:ys) = max match $max xSpacematch ySpacematch
     where match = similarityScore xs ys + score x y
           xSpacematch = similarityScore xs (y:ys) + score x '-'
@@ -40,6 +41,6 @@ attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
 maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
 maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ] 
-    where maxVal = maximum [a| a <- map valueFcn xs]
+    where maxVal = maximum $map valueFcn xs
 
 --outputOptAlignments string1 string2
