@@ -6,8 +6,8 @@ scoreSpace = -1
 
 type AlignmentType = (String,String)
 
---optAlignments :: String -> String -> [AlignmentType]
---optAlignments string1 string2
+optAlignments :: String -> String -> [AlignmentType]
+optAlignments (x:xs) (y:ys) =  
 
 
 
@@ -32,7 +32,8 @@ score x y
 attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])] 
 attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
---maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
---maximaBy valueFcn xs
+maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
+maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ] 
+    where maxVal = maximum [a| a <- map valueFcn xs]
 
 --outputOptAlignments string1 string2
