@@ -10,7 +10,7 @@ optAlignments :: String -> String -> [AlignmentType]
 optAlignments [][] = [("","")]
 optAlignments (x:xs) [] = attachHeads x '-' (optAlignments xs "")
 optAlignments [] (y:ys) = attachHeads '-' y (optAlignments "" ys)
-optAlignments (x:xs) (y:ys) = maximaBy (uncurry similarityScore) $match++xSpacematch++ySpacematch
+optAlignments (x:xs) (y:ys) = maximaBy (uncurry totalScore) $match++xSpacematch++ySpacematch
     where match = attachHeads x y $optAlignments xs ys
           xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
           ySpacematch = attachHeads '-' y $optAlignments (x:xs) ys
@@ -44,9 +44,8 @@ maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ]
     where maxVal = maximum $map valueFcn xs
     
     
-totalScore :: [Char] -> [Char] -> Int
+totalScore :: String -> String -> Int
 totalScore x y = sum $map (uncurry score) (zip x y)
---map (uncurry totalScore)
 
 getAlignments :: AlignmentType -> IO()
 getAlignments (x,y) = do
