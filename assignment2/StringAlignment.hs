@@ -15,13 +15,14 @@ optAlignments (x:xs) (y:ys) = maximaBy (uncurry totalScore) $match++xSpacematch+
           xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
           ySpacematch = attachHeads '-' y $optAlignments (x:xs) ys
 
+max' :: Ord a => a -> a -> a -> a
 max' x y z = max x $max y z
 
 similarityScore :: String -> String -> Int
 similarityScore [][] = 0
 similarityScore xs [] = scoreSpace * length xs
 similarityScore [] ys = scoreSpace * length ys
-similarityScore (x:xs) (y:ys) = max match $max xSpacematch ySpacematch
+similarityScore (x:xs) (y:ys) = max' match xSpacematch ySpacematch
     where match = similarityScore xs ys + score x y
           xSpacematch = similarityScore xs (y:ys) + score x '-'
           ySpacematch = similarityScore (x:xs) ys + score '-' y
@@ -74,14 +75,14 @@ similarityScore2 xs ys = simScr (length xs) (length ys)
         simEntry 0 0 = 0
         simEntry x 0 = x*scoreSpace
         simEntry 0 y = y*scoreSpace
-        simEntry i j  = max' (simEntry (i-1) (j-1) + score x y) (simEntry (i-1) j + scoreSpace) (simEntry i (j-1) + scoreSpace)
+        simEntry i j  = max' scoreDiag scoreDown scoreLeft
 
             where
                 x = xs!!(i-1)
                 y = ys!!(j-1)
---                scoreDiag =  simEntry (i-1) (j-1) + score x y
---                scoreDown =  simEntry (i-1) j + scoreSpace
---               scoreLeft =  simEntry i (j-1) + scoreSpace
+                scoreDiag =  simScr (i-1) (j-1) + score x y
+                scoreDown =  simScr (i-1) j + scoreSpace
+                scoreLeft =  simScr i (j-1) + scoreSpace
     
 mcsLength :: Eq a => [a] -> [a] -> Int
 mcsLength xs ys = mcsLen (length xs) (length ys)
