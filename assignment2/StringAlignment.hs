@@ -40,6 +40,10 @@ score x y
 attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])] 
 attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
+attachTails :: a -> a -> [([a],[a])] -> [([a],[a])]
+attachTails h1 h2 aList = [(xs++[h1],ys++[h2]) | (xs,ys) <- aList]
+
+
 maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
 maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ] 
     where maxVal = maximum $map valueFcn xs
@@ -47,6 +51,7 @@ maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ]
     
 totalScore :: String -> String -> Int
 totalScore x y = sum $map (uncurry score) $zip x y
+
 
 getAlignments :: AlignmentType -> IO()
 getAlignments (x,y) = do
@@ -65,6 +70,28 @@ outputOptAlignments string1 string2 = do
     alignments = optAlignments string1 string2
     number = length alignments
 
+    
+optAlignments2 :: String -> String -> [AlignmentType]    
+optAlignments2 (x:xs) (y:ys) = optScr (length (x:xs)) (length (y:ys))
+    where 
+        optScr i j = optScrTable!!i!!j
+        optScrTable = [[optEntry i j | j<-[0..]] | i <- [0..] ]
+        
+        optEntry :: Int -> Int -> [AlignmentType]
+        optEntry 0 0 = [("","")]
+        optEntry a 0 = attachHeads x '-' $optScr(a-1) 0
+        optEntry 0 b = attachHeads '-' y $optScr 0 (b-1)
+        optEntry i j = maximaBy (uncurry similarityScore2) $letterDiag++letterDown++letterLeft
+
+            where
+                a = (x:xs)!!(i-1)
+                b = (y:ys)!!(j-1)
+                letterDiag = attachHeads x y $optScr(i-1)(j-1) 
+                letterDown = attachHeads x '-' $optScr(i-1)(j)
+                letterLeft = attachHeads '-' y $optScr(i)(j-1)
+                
+                
+              
 similarityScore2 :: String -> String -> Int
 similarityScore2 xs ys = simScr (length xs) (length ys)
     where
