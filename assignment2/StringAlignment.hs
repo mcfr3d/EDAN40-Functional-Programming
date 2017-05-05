@@ -15,7 +15,7 @@ optAlignments (x:xs) (y:ys) = maximaBy (uncurry totalScore) $match++xSpacematch+
           xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
           ySpacematch = attachHeads '-' y $optAlignments (x:xs) ys
 
-
+max' x y z = max x $max y z
 
 similarityScore :: String -> String -> Int
 similarityScore [][] = 0
@@ -45,7 +45,7 @@ maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ]
     
     
 totalScore :: String -> String -> Int
-totalScore x y = sum $map (uncurry score) (zip x y)
+totalScore x y = sum $map (uncurry score) $zip x y
 
 getAlignments :: AlignmentType -> IO()
 getAlignments (x,y) = do
@@ -63,4 +63,39 @@ outputOptAlignments string1 string2 = do
     where
     alignments = optAlignments string1 string2
     number = length alignments
-        
+
+similarityScore2 :: String -> String -> Int
+similarityScore2 xs ys = simScr (length xs) (length ys)
+    where
+        simScr i j = simScrTable!!i!!j
+        simScrTable = [[simEntry i j | j<-[0..]] | i<-[0..] ]
+    
+        simEntry :: Int -> Int -> Int
+        simEntry 0 0 = 0
+        simEntry x 0 = x*scoreSpace
+        simEntry 0 y = y*scoreSpace
+        simEntry i j  = max' (simEntry (i-1) (j-1) + score x y) (simEntry (i-1) j + scoreSpace) (simEntry i (j-1) + scoreSpace)
+
+            where
+                x = xs!!(i-1)
+                y = ys!!(j-1)
+--                scoreDiag =  simEntry (i-1) (j-1) + score x y
+--                scoreDown =  simEntry (i-1) j + scoreSpace
+--               scoreLeft =  simEntry i (j-1) + scoreSpace
+    
+mcsLength :: Eq a => [a] -> [a] -> Int
+mcsLength xs ys = mcsLen (length xs) (length ys)
+  where
+    mcsLen i j = mcsTable!!i!!j
+    mcsTable = [[ mcsEntry i j | j<-[0..]] | i<-[0..] ]
+       
+    mcsEntry :: Int -> Int -> Int
+    mcsEntry _ 0 = 0
+    mcsEntry 0 _ = 0
+    mcsEntry i j
+      | x == y    = 1 + mcsLen (i-1) (j-1)
+      | otherwise = max (mcsLen i (j-1)) 
+                        (mcsLen (i-1) j)
+      where
+         x = xs!!(i-1)
+         y = ys!!(j-1)    
