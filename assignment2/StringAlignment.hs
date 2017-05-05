@@ -102,20 +102,14 @@ optAlignments3 xs ys = snd $optScr (length xs) (length ys)
         optEntry 0 0 = (0,[("","")])
         optEntry i 0 = (scoreSpace,attachTails (xs!!(i-1)) '-' $snd $optScr(i-1) 0)
         optEntry 0 j = (scoreSpace,attachTails '-' (ys!!(j-1)) $snd $optScr 0 (j-1))
-        optEntry i j = (similarityScore2 xs ys ,concat (map snd (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])))
---      optEntry i j = head (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])
---        optEntry i j = head (maximaBy fst [letterDiag,letterDown,letterLeft])
---      optEntry i j = (similarityScore2 xs ys,concat [k | (b,k) <- (maximaBy scoreTuple [letterDiag,letterDown,letterLeft]), b== (similarityScore2 xs ys)])
-
+        optEntry i j = (score a b + (fst $optScr(i-1)(j-1)),concatMap snd (maximaBy fst [letterDiag,letterDown,letterLeft]))
             where
                 a = xs!!(i-1)
                 b = ys!!(j-1)
                 letterDiag = (score a b + (fst $optScr(i-1)(j-1)),attachTails a b $snd $optScr(i-1)(j-1)) 
                 letterDown = (scoreSpace + (fst $optScr(i-1)(j)) , attachTails a '-' $snd $optScr(i-1)(j))
                 letterLeft = (scoreSpace + (fst $optScr(i)(j-1)), attachTails '-' b $snd $optScr(i)(j-1))   
-
-scoreTuple :: (Int,[AlignmentType]) -> Int 
-scoreTuple(x,y) = x            
+            
               
 similarityScore2 :: String -> String -> Int
 similarityScore2 xs ys = simScr (length xs) (length ys)
@@ -135,4 +129,8 @@ similarityScore2 xs ys = simScr (length xs) (length ys)
                 scoreDiag =  simScr (i-1) (j-1) + score x y
                 scoreDown =  simScr (i-1) j + scoreSpace
                 scoreLeft =  simScr i (j-1) + scoreSpace
-      
+ 
+--        optEntry i j = (score a b + (fst $optScr(i-1)(j-1)),concatMap snd (maximaBy fst [letterDiag,letterDown,letterLeft]))
+--      optEntry i j = head (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])
+--        optEntry i j = head (maximaBy fst [letterDiag,letterDown,letterLeft])
+--      optEntry i j = (similarityScore2 xs ys,concat [k | (b,k) <- (maximaBy scoreTuple [letterDiag,letterDown,letterLeft]), b== (similarityScore2 xs ys)]) 
