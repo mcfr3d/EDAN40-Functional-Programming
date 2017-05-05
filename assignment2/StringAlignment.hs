@@ -42,8 +42,26 @@ attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
 maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ] 
     where maxVal = maximum $map valueFcn xs
-
+    
+    
+totalScore :: [Char] -> [Char] -> Int
 totalScore x y = sum $map (uncurry score) (zip x y)
 --map (uncurry totalScore)
 
---outputOptAlignments string1 string2
+getAlignments :: AlignmentType -> IO()
+getAlignments (x,y) = do
+    putStrLn " "
+    putStrLn x
+    putStrLn y
+    putStrLn " "
+
+    
+outputOptAlignments :: String -> String -> IO ()
+outputOptAlignments string1 string2 = do
+    putStrLn ("There are " ++ show number ++ " optimal alignments:")
+    mapM_ getAlignments alignments
+    putStrLn ("There were " ++ show number ++ " optimal alignments!")
+    where
+    alignments = optAlignments string1 string2
+    number = length alignments
+        
