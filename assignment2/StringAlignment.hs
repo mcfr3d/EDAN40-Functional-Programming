@@ -79,16 +79,16 @@ optAlignments2 (x:xs) (y:ys) = optScr (length (x:xs)) (length (y:ys))
         
         optEntry :: Int -> Int -> [AlignmentType]
         optEntry 0 0 = [("","")]
-        optEntry a 0 = attachHeads x '-' $optScr(a-1) 0
-        optEntry 0 b = attachHeads '-' y $optScr 0 (b-1)
-        optEntry i j = maximaBy (uncurry similarityScore2) $letterDiag++letterDown++letterLeft
+        optEntry a 0 = attachTails x '-' $optScr(a-1) 0
+        optEntry 0 b = attachTails '-' y $optScr 0 (b-1)
+        optEntry i j = maximaBy (uncurry totalScore) $letterDiag++letterDown++letterLeft
 
             where
                 a = (x:xs)!!(i-1)
                 b = (y:ys)!!(j-1)
-                letterDiag = attachHeads x y $optScr(i-1)(j-1) 
-                letterDown = attachHeads x '-' $optScr(i-1)(j)
-                letterLeft = attachHeads '-' y $optScr(i)(j-1)
+                letterDiag = attachTails x y $optScr(i-1)(j-1) 
+                letterDown = attachTails x '-' $optScr(i-1)(j)
+                letterLeft = attachTails '-' y $optScr(i)(j-1)
                 
                 
               
@@ -110,20 +110,4 @@ similarityScore2 xs ys = simScr (length xs) (length ys)
                 scoreDiag =  simScr (i-1) (j-1) + score x y
                 scoreDown =  simScr (i-1) j + scoreSpace
                 scoreLeft =  simScr i (j-1) + scoreSpace
-    
-mcsLength :: Eq a => [a] -> [a] -> Int
-mcsLength xs ys = mcsLen (length xs) (length ys)
-  where
-    mcsLen i j = mcsTable!!i!!j
-    mcsTable = [[ mcsEntry i j | j<-[0..]] | i<-[0..] ]
-       
-    mcsEntry :: Int -> Int -> Int
-    mcsEntry _ 0 = 0
-    mcsEntry 0 _ = 0
-    mcsEntry i j
-      | x == y    = 1 + mcsLen (i-1) (j-1)
-      | otherwise = max (mcsLen i (j-1)) 
-                        (mcsLen (i-1) j)
-      where
-         x = xs!!(i-1)
-         y = ys!!(j-1)    
+      
