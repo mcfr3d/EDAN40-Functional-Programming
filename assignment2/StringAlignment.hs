@@ -93,25 +93,26 @@ optAlignments2 xs ys = optScr (length xs) (length ys)
 
                 
 optAlignments3 :: String -> String -> [AlignmentType]    
-optAlignments3 xs ys = optScr (length xs) (length ys)
+optAlignments3 xs ys = snd $optScr (length xs) (length ys)
     where 
         optScr i j = optScrTable!!i!!j
         optScrTable = [[optEntry i j | j<-[0..]] | i <- [0..] ]
         
-        optEntry :: Int -> Int -> [AlignmentType]
-        optEntry 0 0 = [("","")]
-        optEntry i 0 = attachTails (xs!!(i-1)) '-' $optScr(i-1) 0
-        optEntry 0 j = attachTails '-' (ys!!(j-1)) $optScr 0 (j-1)
-        optEntry i j = maximaBy (uncurry totalScore) $letterDiag++letterDown++letterLeft
+        optEntry :: Int -> Int -> (Int,[AlignmentType])
+        optEntry 0 0 = (0,[("","")])
+        optEntry i 0 = (scoreSpace,attachTails (xs!!(i-1)) '-' $snd $optScr(i-1) 0)
+        optEntry 0 j = (scoreSpace,attachTails '-' (ys!!(j-1)) $snd $optScr 0 (j-1))
+        optEntry i j = head (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])
 
             where
                 a = xs!!(i-1)
                 b = ys!!(j-1)
-                letterDiag = attachTails a b $optScr(i-1)(j-1) 
-                letterDown = attachTails a '-' $optScr(i-1)(j)
-                letterLeft = attachTails '-' b $optScr(i)(j-1)   
+                letterDiag = (score a b + (fst $optScr(i-1)(j-1)),attachTails a b $snd $optScr(i-1)(j-1)) 
+                letterDown = (scoreSpace + (fst $optScr(i-1)(j)) , attachTails a '-' $snd $optScr(i-1)(j))
+                letterLeft = (scoreSpace + (fst $optScr(i)(j-1)), attachTails '-' b $snd $optScr(i)(j-1))   
 
-                
+scoreTuple :: (Int,[AlignmentType]) -> Int 
+scoreTuple(x,y) = x            
               
 similarityScore2 :: String -> String -> Int
 similarityScore2 xs ys = simScr (length xs) (length ys)
