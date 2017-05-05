@@ -71,25 +71,46 @@ outputOptAlignments string1 string2 = do
     number = length alignments
 
     
+                
 optAlignments2 :: String -> String -> [AlignmentType]    
-optAlignments2 (x:xs) (y:ys) = optScr (length (x:xs)) (length (y:ys))
+optAlignments2 xs ys = optScr (length xs) (length ys)
     where 
         optScr i j = optScrTable!!i!!j
         optScrTable = [[optEntry i j | j<-[0..]] | i <- [0..] ]
         
         optEntry :: Int -> Int -> [AlignmentType]
         optEntry 0 0 = [("","")]
-        optEntry a 0 = attachTails x '-' $optScr(a-1) 0
-        optEntry 0 b = attachTails '-' y $optScr 0 (b-1)
+        optEntry i 0 = attachTails (xs!!(i-1)) '-' $optScr(i-1) 0
+        optEntry 0 j = attachTails '-' (ys!!(j-1)) $optScr 0 (j-1)
         optEntry i j = maximaBy (uncurry totalScore) $letterDiag++letterDown++letterLeft
 
             where
-                a = (x:xs)!!(i-1)
-                b = (y:ys)!!(j-1)
-                letterDiag = attachTails x y $optScr(i-1)(j-1) 
-                letterDown = attachTails x '-' $optScr(i-1)(j)
-                letterLeft = attachTails '-' y $optScr(i)(j-1)
+                a = xs!!(i-1)
+                b = ys!!(j-1)
+                letterDiag = attachTails a b $optScr(i-1)(j-1) 
+                letterDown = attachTails a '-' $optScr(i-1)(j)
+                letterLeft = attachTails '-' b $optScr(i)(j-1) 
+
                 
+optAlignments3 :: String -> String -> [AlignmentType]    
+optAlignments3 xs ys = optScr (length xs) (length ys)
+    where 
+        optScr i j = optScrTable!!i!!j
+        optScrTable = [[optEntry i j | j<-[0..]] | i <- [0..] ]
+        
+        optEntry :: Int -> Int -> [AlignmentType]
+        optEntry 0 0 = [("","")]
+        optEntry i 0 = attachTails (xs!!(i-1)) '-' $optScr(i-1) 0
+        optEntry 0 j = attachTails '-' (ys!!(j-1)) $optScr 0 (j-1)
+        optEntry i j = maximaBy (uncurry totalScore) $letterDiag++letterDown++letterLeft
+
+            where
+                a = xs!!(i-1)
+                b = ys!!(j-1)
+                letterDiag = attachTails a b $optScr(i-1)(j-1) 
+                letterDown = attachTails a '-' $optScr(i-1)(j)
+                letterLeft = attachTails '-' b $optScr(i)(j-1)   
+
                 
               
 similarityScore2 :: String -> String -> Int
@@ -100,8 +121,8 @@ similarityScore2 xs ys = simScr (length xs) (length ys)
     
         simEntry :: Int -> Int -> Int
         simEntry 0 0 = 0
-        simEntry x 0 = x*scoreSpace
-        simEntry 0 y = y*scoreSpace
+        simEntry i 0 = i*scoreSpace
+        simEntry 0 j = j*scoreSpace
         simEntry i j  = max' scoreDiag scoreDown scoreLeft
 
             where
