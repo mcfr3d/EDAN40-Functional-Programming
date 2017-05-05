@@ -104,6 +104,7 @@ optAlignments3 xs ys = snd $optScr (length xs) (length ys)
         optEntry 0 j = (scoreSpace,attachTails '-' (ys!!(j-1)) $snd $optScr 0 (j-1))
         optEntry i j = (similarityScore2 xs ys ,concat (map snd (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])))
 --      optEntry i j = head (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])
+--        optEntry i j = head (maximaBy fst [letterDiag,letterDown,letterLeft])
 --      optEntry i j = (similarityScore2 xs ys,concat [k | (b,k) <- (maximaBy scoreTuple [letterDiag,letterDown,letterLeft]), b== (similarityScore2 xs ys)])
 
             where
