@@ -70,8 +70,9 @@ outputOptAlignments string1 string2 = do
     alignments = optAlignments string1 string2
     number = length alignments
 
-    
-                
+--Here follows the optimized versions of optAlignments and similarityScore with memoization
+
+--Table contaning values of type [AlignmentType]            
 optAlignments2 :: String -> String -> [AlignmentType]    
 optAlignments2 xs ys = optScr (length xs) (length ys)
     where 
@@ -91,7 +92,7 @@ optAlignments2 xs ys = optScr (length xs) (length ys)
                 letterDown = attachTails a '-' $optScr(i-1)(j)
                 letterLeft = attachTails '-' b $optScr(i)(j-1) 
 
-                
+--Table contaning values of type (Int, [AlignmentType])            
 optAlignments3 :: String -> String -> [AlignmentType]    
 optAlignments3 xs ys = snd $optScr (length xs) (length ys)
     where 
