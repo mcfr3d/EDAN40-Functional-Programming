@@ -100,8 +100,8 @@ optAlignments3 xs ys = snd $optScr (length xs) (length ys)
         
         optEntry :: Int -> Int -> (Int,[AlignmentType])
         optEntry 0 0 = (0,[("","")])
-        optEntry i 0 = (scoreSpace,attachTails (xs!!(i-1)) '-' $snd $optScr(i-1) 0)
-        optEntry 0 j = (scoreSpace,attachTails '-' (ys!!(j-1)) $snd $optScr 0 (j-1))
+        optEntry i 0 = (scoreSpace*i,attachTails (xs!!(i-1)) '-' $snd $optScr(i-1) 0)
+        optEntry 0 j = (scoreSpace*j,attachTails '-' (ys!!(j-1)) $snd $optScr 0 (j-1))
         optEntry i j = (fst (head (maximaBy fst [letterDiag,letterDown,letterLeft])),concatMap snd (maximaBy fst [letterDiag,letterDown,letterLeft]))
             where
                 a = xs!!(i-1)
