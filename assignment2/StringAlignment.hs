@@ -15,8 +15,7 @@ optAlignments (x:xs) (y:ys) = maximaBy (uncurry totalScore) $match++xSpacematch+
           xSpacematch = attachHeads x '-' $optAlignments xs (y:ys)
           ySpacematch = attachHeads '-' y $optAlignments (x:xs) ys
 
-max' :: Ord a => a -> a -> a -> a
-max' x y z = max x $max y z
+
 
 similarityScore :: String -> String -> Int
 similarityScore [][] = 0
@@ -40,6 +39,7 @@ score x y
 attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])] 
 attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
+-- attachTails functions attaches the two arguments to the end of each list in the tuple
 attachTails :: a -> a -> [([a],[a])] -> [([a],[a])]
 attachTails h1 h2 aList = [(xs++[h1],ys++[h2]) | (xs,ys) <- aList]
 
@@ -47,10 +47,13 @@ attachTails h1 h2 aList = [(xs++[h1],ys++[h2]) | (xs,ys) <- aList]
 maximaBy :: Ord b => (a -> b) -> [a] -> [a] 
 maximaBy valueFcn xs = [a| a <- xs, valueFcn a == maxVal ] 
     where maxVal = maximum $map valueFcn xs
-    
+
+max' :: Ord a => a -> a -> a -> a
+max' x y z = max x $max y z    
     
 totalScore :: String -> String -> Int
-totalScore x y = sum $map (uncurry score) $zip x y
+totalScore x y = sum $zipWith score x y
+
 
 
 getAlignments :: AlignmentType -> IO()
@@ -67,12 +70,12 @@ outputOptAlignments string1 string2 = do
     mapM_ getAlignments alignments
     putStrLn ("There were " ++ show number ++ " optimal alignments!")
     where
-    alignments = optAlignments string1 string2
+    alignments = optAlignments3 string1 string2
     number = length alignments
 
 --Here follows the optimized versions of optAlignments and similarityScore with memoization
 
---Table contaning values of type [AlignmentType]            
+--Table contaning values of type [AlignmentType] (not optimized version of optAlignments)            
 optAlignments2 :: String -> String -> [AlignmentType]    
 optAlignments2 xs ys = optScr (length xs) (length ys)
     where 
@@ -92,7 +95,8 @@ optAlignments2 xs ys = optScr (length xs) (length ys)
                 letterDown = attachTails a '-' $optScr(i-1)(j)
                 letterLeft = attachTails '-' b $optScr(i)(j-1) 
 
---Table contaning values of type (Int, [AlignmentType])            
+--Table contaning values of type (Int, [AlignmentType])
+-- Optimized optAlignments algorithm            
 optAlignments3 :: String -> String -> [AlignmentType]    
 optAlignments3 xs ys = snd $optScr (length xs) (length ys)
     where 
@@ -130,8 +134,3 @@ similarityScore2 xs ys = simScr (length xs) (length ys)
                 scoreDiag =  simScr (i-1) (j-1) + score x y
                 scoreDown =  simScr (i-1) j + scoreSpace
                 scoreLeft =  simScr i (j-1) + scoreSpace
- 
---        optEntry i j = (score a b + (fst $optScr(i-1)(j-1)),concatMap snd (maximaBy fst [letterDiag,letterDown,letterLeft]))
---      optEntry i j = head (maximaBy scoreTuple [letterDiag,letterDown,letterLeft])
---        optEntry i j = head (maximaBy fst [letterDiag,letterDown,letterLeft])
---      optEntry i j = (similarityScore2 xs ys,concat [k | (b,k) <- (maximaBy scoreTuple [letterDiag,letterDown,letterLeft]), b== (similarityScore2 xs ys)]) 
