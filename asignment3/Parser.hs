@@ -47,7 +47,7 @@ accept :: String -> Parser String
 accept w = (token (chars (length w))) ? (==w)
 
 require :: String -> Parser String
-require w  = error "require not implemented"
+require w  = ((token.chars.length $w) ? (==w)) ! err w
 
 lit :: Char -> Parser Char
 lit c = token char ? (==c)
