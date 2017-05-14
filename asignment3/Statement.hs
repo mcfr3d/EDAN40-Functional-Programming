@@ -8,12 +8,14 @@ data Statement =
     Assignment String Expr.T |
     Skip |
     If Expr.T Statement Statement
-   -- While Expr.T Begin |
+   -- While Expr.T Statement|
    -- Read String |
    -- Write Expr.T|
    -- Begin Statements|
     deriving Show
 
+-- type Statement = [Statement]    
+    
 assignment = word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
 buildAss (v, e) = Assignment v e
 
