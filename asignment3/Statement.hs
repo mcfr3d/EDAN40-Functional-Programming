@@ -7,14 +7,14 @@ type T = Statement
 data Statement =
     Assignment String Expr.T |
     Skip |
-    If Expr.T Statement Statement
-   -- While Expr.T Statement|
-   -- Read String |
-   -- Write Expr.T|
-   -- Begin Statements|
+    If Expr.T Statement Statement|
+    While Expr.T Statement|
+    Read String |
+    Write Expr.T|
+    Begin Statements
     deriving Show
 
--- type Statement = [Statement]    
+type Statements = [Statement]    
     
 assignment = word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
 buildAss (v, e) = Assignment v e
@@ -22,19 +22,33 @@ buildAss (v, e) = Assignment v e
 skip = accept "skip" #- require ";" >-> buildSkip
 buildSkip a = Skip
 
-if_stmt = accept "if" -# Expr.parse #- require "then" # stmt #- require "else" # stmt >-> buildIf
+if_stmt = accept "if" -# Expr.parse #- require "then" # parse #- require "else" # parse >-> buildIf
 buildIf ((e, s1), s2) = If e s1 s2
 
-stmt = assignment ! skip ! if_stmt 
+while = accept "while" -# Expr.parse #- require "do" # parse >-> buildWhile
+buildWhile (e,s) = While e s
+
+read_stmt = accept "read" -# word #- require ";" >-> buildRead
+buildRead a = Read a
+
+write = accept "write" -# Expr.parse #- require ";" >-> buildWrite
+buildWrite e = Write e
+
+begin = accept "begin" -# iter parse #- require "end">-> buildBegin
+buildBegin s = Begin s
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
+exec (Assignment stringvar expr:stmts) dict input =
+    exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
 exec (If cond thenStmts elseStmts: stmts) dict input = 
     if (Expr.value cond dict)>0 
     then exec (thenStmts: stmts) dict input
     else exec (elseStmts: stmts) dict input
-
-
+exec (While cond doStmts: stmts) dict input =
+    if (Expr.value cond dict)>0
+    then exec (doStmts:While cond doStmts:stmts) dict input
+    else exec stmts dict input
 
 instance Parse Statement where
-  parse = error "Statement.parse not implemented"
+  parse = assignment ! skip ! if_stmt ! while ! read_stmt ! begin
   toString = error "Statement.toString not implemented"
