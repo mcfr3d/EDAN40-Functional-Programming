@@ -19,10 +19,10 @@ data Statement =
 assignment = word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
 buildAss (v, e) = Assignment v e
 
-skip = require "skip" #- require ";" >-> buildSkip
+skip = accept "skip" #- require ";" >-> buildSkip
 buildSkip a = Skip
 
-if_stmt = require "if" -# Expr.parse #- require "then" -# stmt # stmt #- require ";" -# require "else" # stmt >-> buildIf
+if_stmt = accept "if" -# Expr.parse #- require "then" # stmt #- require "else" # stmt >-> buildIf
 buildIf ((e, s1), s2) = If e s1 s2
 
 stmt = assignment ! skip ! if_stmt 
