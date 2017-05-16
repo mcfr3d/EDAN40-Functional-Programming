@@ -64,4 +64,4 @@ exec (Comment:stmts) dict input = exec stmts dict input
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin ! comment
   toString = error "Statement.toString not implemented"
- 
+ --testing
