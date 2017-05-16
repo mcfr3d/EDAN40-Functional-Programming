@@ -27,23 +27,23 @@ spaces :: Parser String
 --spaces =  space# iter space >-> cons
 spaces = iter space
 
-symbolCheck ::Parser String
-symbolCheck = chars 2 ? (=="--")
---symbolCheck _ = Nothing
+commentSymbolCheck ::Parser String
+commentSymbolCheck = chars 2 ? (=="--")
 
+newLineChar :: Parser String
 newLineChar = iter $char ? (/='\n')
 
-lookingForComment = symbolCheck -# newLineChar
---newLineChar2 :: Parser String
---newLineChar2 = ((chars.length $2) ? (=="--"))#- (iter (char ? (/='\n')))
--- #- spaces
+lookingForComment :: Parser String
+lookingForComment = commentSymbolCheck -# newLineChar #- spaces
+
+token2 :: Parser a -> Parser a
+token2 m = (lookingForComment -#m) ! token m
 
 space :: Parser Char
 space = char ? isSpace
 
 token :: Parser a -> Parser a
 token m = m #- spaces 
--- #-newLineChar2
 
 letter :: Parser Char
 letter =  char ? isAlpha
