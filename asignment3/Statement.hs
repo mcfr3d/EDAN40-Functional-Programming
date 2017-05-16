@@ -58,7 +58,7 @@ exec (While cond doStmts: stmts) dict input =
     else exec stmts dict input
 exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) dict) xs
 exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
-exec (Begin begStmts:stmts) dict input = exec begStmts dict input ++ exec stmts dict input
+exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
 exec (Comment:stmts) dict input = exec stmts dict input
 
 instance Parse Statement where
