@@ -49,7 +49,10 @@ exec (While cond doStmts: stmts) dict input =
     if (Expr.value cond dict)>0
     then exec (doStmts:While cond doStmts:stmts) dict input
     else exec stmts dict input
-exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) dict) xs 
+exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) dict) xs
+exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
+exec (Begin begStmts:stmts) dict input = exec begStmts dict input ++ exec stmts dict input
+
 instance Parse Statement where
-  parse = assignment ! skip ! if_stmt ! while ! read_stmt ! begin
+  parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin
   toString = error "Statement.toString not implemented"
