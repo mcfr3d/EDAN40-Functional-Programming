@@ -64,9 +64,15 @@ instance Parse Statement where
 
 --number' :: Integer -> Parser Integer
 --number' n = digitVal #> (\ d -> number' (10*n+d))
-          ! return n
+--          ! return n
 --number :: Parser Integer
 --number = token (digitVal #> number')
 
---character :: Parser Char
---character (c:cs) = 
+character' ::[Char] -> Parser [Char]
+character' [] = return []
+character' ('\n':cs) = return ('\n':cs)
+character' (c:cs) = char #> (\d -> character' cs )! return (c:cs)
+
+character :: Parser String
+character = token (word #> character')
+isNewLineChar = (=='\n') 
