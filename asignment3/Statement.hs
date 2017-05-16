@@ -38,7 +38,7 @@ buildWrite e = Write e
 begin = accept "begin" -# iter parse #- require "end">-> buildBegin
 buildBegin s = Begin s
 
-comment = accept "--" -# iter char -# require "\n" >-> buildComment
+comment = accept "--" -# newLineChar >-> buildComment
 buildComment a = Comment
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
@@ -68,11 +68,17 @@ instance Parse Statement where
 --number :: Parser Integer
 --number = token (digitVal #> number')
 
-character' ::[Char] -> Parser [Char]
-character' [] = return []
-character' ('\n':cs) = return ('\n':cs)
-character' (c:cs) = char #> (\d -> character' cs )! return (c:cs)
+--character' ::[Char] -> Parser [Char]
+--character' [] = return []
+--character' ('\n':cs) = return ('\n':cs)
+--character' (c:cs) = char #> (\d -> character' cs )! return (c:cs)
 
-character :: Parser String
-character = token (word #> character')
-isNewLineChar = (=='\n') 
+--character :: Parser String
+--character = token (word #> character')
+newLineChar = token $iter isNewLineChar
+isNewLineChar = char ? (/='\n')
+
+--character' :: Parser Char
+--character' [] = return []
+--character' (c:cs) = lit '\n' ! character' cs
+ 
