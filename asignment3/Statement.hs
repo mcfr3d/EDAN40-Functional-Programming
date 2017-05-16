@@ -17,25 +17,25 @@ data Statement =
 
 type Statements = [Statement]    
     
-assignment = word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
+assignment = token $ word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
 buildAss (v, e) = Assignment v e
 
-skip = accept "skip" #- require ";" >-> buildSkip
+skip = token $ accept "skip" #- require ";" >-> buildSkip
 buildSkip a = Skip
 
-if_stmt = accept "if" -# Expr.parse #- require "then" # parse #- require "else" # parse >-> buildIf
+if_stmt = token $ accept "if" -# Expr.parse #- require "then" # parse #- require "else" # parse >-> buildIf
 buildIf ((e, s1), s2) = If e s1 s2
 
-while = accept "while" -# Expr.parse #- require "do" # parse >-> buildWhile
+while =token $ accept "while" -# Expr.parse #- require "do" # parse >-> buildWhile
 buildWhile (e,s) = While e s
 
-read_stmt = accept "read" -# word #- require ";" >-> buildRead
+read_stmt = token $ accept "read" -# word #- require ";" >-> buildRead
 buildRead a = Read a
 
-write = accept "write" -# Expr.parse #- require ";" >-> buildWrite
+write = token $ accept "write" -# Expr.parse #- require ";" >-> buildWrite
 buildWrite e = Write e
 
-begin = accept "begin" -# iter parse #- require "end">-> buildBegin
+begin = token $ accept "begin" -# iter parse #- require "end">-> buildBegin
 buildBegin s = Begin s
 
 --comment = accept "--" -# newLineChar >-> buildComment
