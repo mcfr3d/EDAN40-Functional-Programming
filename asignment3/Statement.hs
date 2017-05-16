@@ -41,6 +41,9 @@ buildBegin s = Begin s
 comment = accept "--" -# newLineChar >-> buildComment
 buildComment a = Comment
 
+newLineChar = token $iter isNewLineChar
+isNewLineChar = char ? (/='\n')
+
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 exec (Assignment stringvar expr:stmts) dict input =
     exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
@@ -61,24 +64,4 @@ exec (Comment:stmts) dict input = exec stmts dict input
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin ! comment
   toString = error "Statement.toString not implemented"
-
---number' :: Integer -> Parser Integer
---number' n = digitVal #> (\ d -> number' (10*n+d))
---          ! return n
---number :: Parser Integer
---number = token (digitVal #> number')
-
---character' ::[Char] -> Parser [Char]
---character' [] = return []
---character' ('\n':cs) = return ('\n':cs)
---character' (c:cs) = char #> (\d -> character' cs )! return (c:cs)
-
---character :: Parser String
---character = token (word #> character')
-newLineChar = token $iter isNewLineChar
-isNewLineChar = char ? (/='\n')
-
---character' :: Parser Char
---character' [] = return []
---character' (c:cs) = lit '\n' ! character' cs
  
