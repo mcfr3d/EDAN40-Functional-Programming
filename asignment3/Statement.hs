@@ -11,7 +11,8 @@ data Statement =
     While Expr.T Statement|
     Read String |
     Write Expr.T|
-    Begin Statements
+    Begin Statements|
+    Comment
     deriving Show
 
 type Statements = [Statement]    
@@ -37,6 +38,9 @@ buildWrite e = Write e
 begin = accept "begin" -# iter parse #- require "end">-> buildBegin
 buildBegin s = Begin s
 
+comment = accept "--" -# iter char -# require "\n" >-> buildComment
+buildComment a = Comment
+
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 exec (Assignment stringvar expr:stmts) dict input =
     exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
@@ -52,7 +56,17 @@ exec (While cond doStmts: stmts) dict input =
 exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) dict) xs
 exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
 exec (Begin begStmts:stmts) dict input = exec begStmts dict input ++ exec stmts dict input
+exec (Comment:stmts) dict input = exec stmts dict input
 
 instance Parse Statement where
-  parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin
+  parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin ! comment
   toString = error "Statement.toString not implemented"
+
+--number' :: Integer -> Parser Integer
+--number' n = digitVal #> (\ d -> number' (10*n+d))
+          ! return n
+--number :: Parser Integer
+--number = token (digitVal #> number')
+
+--character :: Parser Char
+--character (c:cs) = 
