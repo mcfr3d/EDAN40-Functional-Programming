@@ -44,7 +44,7 @@ exec (Assignment stringvar expr:stmts) dict input =
     exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
 exec (Skip:stmts) dict input = exec stmts dict input
 exec (If cond thenStmts elseStmts: stmts) dict input = 
-    if (Expr.value cond dict)>0 
+    if (Expr.value cond dict)>0
     then exec (thenStmts: stmts) dict input
     else exec (elseStmts: stmts) dict input
 exec (While cond doStmts: stmts) dict input =
@@ -61,7 +61,7 @@ indent = flip (take.(4*)) $repeat ' '
 shw :: Int -> Statement -> String
 shw prec (Assignment string expr) =indent prec ++ string++" := "++Expr.toString expr++";\n"
 shw prec (Skip) =indent prec ++ "skip;\n"
-shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ " then\n" ++ shw (prec+1) stmt ++ "else\n" ++ shw (prec+1) stmt 
+shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ " then\n" ++ shw (prec+1) stmt ++indent prec ++ "else\n" ++ shw (prec+1) stmt 
 shw prec (While expr stmt) =indent prec ++ "while " ++ Expr.toString expr ++ " do\n" ++ shw (prec+1) stmt 
 shw prec (Read string)=indent prec ++"read " ++ string ++ ";\n"
 shw prec (Write expr)=indent prec ++ "write " ++ Expr.toString expr ++ ";\n"

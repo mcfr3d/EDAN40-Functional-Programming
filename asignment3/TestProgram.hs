@@ -112,4 +112,4 @@ rp4 = Program.exec p4 [4,4]
 *TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5)*2;write m;") [0]
 [512]
 *TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5)*2+2;write m;") [0]
-[514]}
+[514]-}

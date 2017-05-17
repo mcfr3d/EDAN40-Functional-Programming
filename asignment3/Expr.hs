@@ -33,9 +33,9 @@ data Expr = Num Integer | Var String | Add Expr Expr
 
 type T = Expr
 
-var, num, factor, term, expr :: Parser Expr
+var, num, factor, term, expr, expo :: Parser Expr
 
-term', expr' :: Expr -> Parser Expr
+term', expr', expo' :: Expr -> Parser Expr
 
 var = word >-> Var
 
