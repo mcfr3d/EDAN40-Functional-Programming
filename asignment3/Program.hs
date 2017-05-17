@@ -7,7 +7,7 @@ newtype T = Program Statements deriving Show
 type Statements = [Statement.T]
 instance Parse T where
   parse = statements
-  toString = error "Program.toString not implemented"
+  toString (Program stmts) = concatMap Statement.toString stmts
 
 statements = iter Statement.parse >-> buildStatements
 buildStatements ls = Program ls

@@ -55,14 +55,17 @@ exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) 
 exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
 exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
 
+
+indent = flip take (repeat '\t')
+
 shw :: Int -> Statement -> String
-shw prec (Assignment string expr) = string++" := "++(Expr.shw 0 expr)++";\n"
-shw prec (Skip) = "skip;\n"
-shw prec (If expr stmt elseStmt) = "if " ++ Expr.shw 0 expr ++ "\n then \n " ++ shw 0 stmt ++ "\n else\n" ++ shw 0 stmt 
-shw prec (While expr stmt) = "while " ++ Expr.shw 0 expr ++ "\n do \n" ++ shw 0 stmt 
-shw prec (Read string)="read" ++ string ++ "\n"
-shw prec (Write expr)= "write " Expr.shw 0 expr ++ "\n"
-shw prec (Begin (stmt:stmts)) = "begin \n" ++ "test"
+shw prec (Assignment string expr) =indent prec ++ string++" := "++Expr.toString expr++";\n"
+shw prec (Skip) =indent prec ++ "skip;\n"
+shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ "\n then \n " ++ shw (prec+1) stmt ++ "\n else\n" ++ shw (prec+1) stmt 
+shw prec (While expr stmt) =indent prec ++ "while " ++ Expr.toString expr ++ "\n do \n" ++ shw (prec+1) stmt 
+shw prec (Read string)=indent prec ++"read" ++ string ++ "\n"
+shw prec (Write expr)=indent prec ++ "write " ++ Expr.toString expr ++ ";\n"
+shw prec (Begin (stmt:stmts)) = indent prec ++ "begin\n" ++ concat (map (shw (prec+1)) stmts) ++ indent prec ++ "end\n"
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
   toString = shw 0

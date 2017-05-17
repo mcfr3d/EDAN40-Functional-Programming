@@ -59,7 +59,7 @@ accept :: String -> Parser String
 accept w = (token (chars (length w))) ? (==w)
 
 require :: String -> Parser String
-require w  = ((token.chars.length $w) ? (==w)) ! err w
+require w  = ((token.chars.length $w) ? (==w)) ! err ("expected " ++ w)
 
 lit :: Char -> Parser Char
 lit c = token char ? (==c)
