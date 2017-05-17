@@ -12,7 +12,6 @@ data Statement =
     Read String |
     Write Expr.T|
     Begin Statements
---    |Comment
     deriving Show
 
 type Statements = [Statement]    
@@ -38,12 +37,6 @@ buildWrite e = Write e
 begin = token $ accept "begin" -# iter parse #- require "end">-> buildBegin
 buildBegin s = Begin s
 
---comment = accept "--" -# newLineChar >-> buildComment
---buildComment a = Comment
-
---newLineChar = token $iter isNewLineChar
---isNewLineChar = char ? (/='\n')
-
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 exec (Assignment stringvar expr:stmts) dict input =
     exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
@@ -63,5 +56,4 @@ exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
 
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
-  -- ! comment
   toString = error "Statement.toString not implemented"

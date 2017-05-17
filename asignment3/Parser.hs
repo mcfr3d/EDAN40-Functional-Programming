@@ -33,17 +33,11 @@ commentSymbolCheck = chars 2 ? (=="--")
 newLineChar :: Parser String
 newLineChar = iter $char ? (/='\n')
 
---lookingForComment2 :: Parser String
---lookingForComment2 = commentSymbolCheck -# newLineChar #- spaces
-
 lookingForComment :: Parser String 
 lookingForComment = (commentSymbolCheck -# newLineChar #- spaces) ! return "" 
 
 token :: Parser a -> Parser a
 token m = lookingForComment -# m #- spaces #- lookingForComment
-
---token2 :: Parser a -> Parser a
---token2 m = (lookingForComment -#m) ! (m #- spaces #- (lookingForComment ! return ""))
 
 space :: Parser Char
 space = char ? isSpace

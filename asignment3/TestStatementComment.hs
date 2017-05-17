@@ -14,4 +14,4 @@ p8 = fromString "while n do n:=n-1;"
 s9 = "while n do begin fac:=fac*n; n:=n-1; end"
 p9 = fromString s9
 p10 = fromString  "begin read x ; x := x + 1 ; write x; end"
-p11 = fromString  ("begin read n; fac:=1; " ++ s9 ++ " write fac; end")
+p11 = fromString  ("begin read n; -- blabla blab abla \n fac:=1; " ++ s9 ++ " write fac; end")
