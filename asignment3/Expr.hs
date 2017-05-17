@@ -56,10 +56,12 @@ factor = num !
          lit '(' -# expr #- lit ')' !
          err "illegal factor"
              
-             
+
+expo' e = expOp # factor >-> bldOp e #> expo' ! return e            
+expo = factor #> expo'
              
 term' e = mulOp # factor >-> bldOp e #> term' ! return e
-term = factor #> term'
+term = expo #> term'
        
 expr' e = addOp # term >-> bldOp e #> expr' ! return e
 expr = term #> expr'
