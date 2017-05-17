@@ -88,3 +88,28 @@ s4 = "\
 p4 = fromString s4
 
 rp4 = Program.exec p4 [4,4]
+
+{-- *TestProgram> Program.exec (fromString "m := 1+2;write m;") [0]
+[3]
+*TestProgram> Program.exec (fromString "m := 2^2;write m;") [0]
+[4]
+*TestProgram> Program.exec (fromString "m := 2^5;write m;") [0]
+[32]
+*TestProgram> Program.exec (fromString "m := 2^(3+5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "m := (1+1)^(3+5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "a := 3; m := (1+1)^(a+5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+1)^(a+5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5);write m;") [0]
+[256]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5)+2;write m;") [0]
+[258]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5)*2;write m;") [0]
+[512]
+*TestProgram> Program.exec (fromString "b:=1; a := 3; m := (b+(1*2-1))^(a+5*2-5)*2+2;write m;") [0]
+[514]}
