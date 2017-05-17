@@ -55,6 +55,14 @@ exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) 
 exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
 exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
 
+shw :: Int -> Statement -> String
+shw prec (Assignment string expr) = string++" := "++(Expr.shw 0 expr)++";\n"
+shw prec (Skip) = "skip;\n"
+shw prec (If expr stmt elseStmt) = "if " ++ Expr.shw 0 expr ++ "\n then \n " ++ shw 0 stmt ++ "\n else\n" ++ shw 0 stmt 
+shw prec (While expr stmt) = "while " ++ Expr.shw 0 expr ++ "\n do \n" ++ shw 0 stmt 
+shw prec (Read string)="read" ++ string ++ "\n"
+shw prec (Write expr)= "write " Expr.shw 0 expr ++ "\n"
+shw prec (Begin (stmt:stmts)) = "begin \n" ++ "test"
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
-  toString = error "Statement.toString not implemented"
+  toString = shw 0
