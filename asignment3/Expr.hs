@@ -28,7 +28,7 @@ import Parser hiding (T)
 import qualified Dictionary
 
 data Expr = Num Integer | Var String | Add Expr Expr 
-       | Sub Expr Expr | Mul Expr Expr | Div Expr Expr
+       | Sub Expr Expr | Mul Expr Expr | Div Expr Expr | Exp Expr Expr
          deriving Show
 
 type T = Expr
@@ -46,6 +46,8 @@ mulOp = lit '*' >-> (\ _ -> Mul) !
 
 addOp = lit '+' >-> (\ _ -> Add) !
         lit '-' >-> (\ _ -> Sub)
+        
+expOp = lit '^' >-> (\_ -> Exp)        
 
 bldOp e (oper,e') = oper e e'
 
@@ -53,6 +55,8 @@ factor = num !
          var !
          lit '(' -# expr #- lit ')' !
          err "illegal factor"
+             
+             
              
 term' e = mulOp # factor >-> bldOp e #> term' ! return e
 term = factor #> term'

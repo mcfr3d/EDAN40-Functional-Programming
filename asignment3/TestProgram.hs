@@ -3,7 +3,7 @@ module TestProgram where
 
 import Program
 
-p, p1, p2, p3, p4 :: Program.T
+p, p1, p2, p3, p4, p1' :: Program.T
 p = fromString  ("\
 \read k;\
 \read n;\
@@ -51,9 +51,16 @@ s1 = "\
 \  end\
 \write s;"
 
+p1' = fromString s1
+
+
 sp = putStr (toString p)
 
 sp1 = putStr (toString p1)
+
+sp2 = putStr (toString p1')
+
+sp3 = putStr (toString p4)
 
 p2 = fromString (toString p)
 

@@ -56,16 +56,16 @@ exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict inp
 exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
 
 
-indent = flip take (repeat '\t')
+indent = flip (take.(4*)) $repeat ' '
 
 shw :: Int -> Statement -> String
 shw prec (Assignment string expr) =indent prec ++ string++" := "++Expr.toString expr++";\n"
 shw prec (Skip) =indent prec ++ "skip;\n"
-shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ "\n then \n " ++ shw (prec+1) stmt ++ "\n else\n" ++ shw (prec+1) stmt 
-shw prec (While expr stmt) =indent prec ++ "while " ++ Expr.toString expr ++ "\n do \n" ++ shw (prec+1) stmt 
-shw prec (Read string)=indent prec ++"read" ++ string ++ "\n"
+shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ " then\n" ++ shw (prec+1) stmt ++ "else\n" ++ shw (prec+1) stmt 
+shw prec (While expr stmt) =indent prec ++ "while " ++ Expr.toString expr ++ " do\n" ++ shw (prec+1) stmt 
+shw prec (Read string)=indent prec ++"read " ++ string ++ ";\n"
 shw prec (Write expr)=indent prec ++ "write " ++ Expr.toString expr ++ ";\n"
-shw prec (Begin (stmt:stmts)) = indent prec ++ "begin\n" ++ concat (map (shw (prec+1)) stmts) ++ indent prec ++ "end\n"
+shw prec (Begin (stmt:stmts)) = indent prec ++ "begin\n" ++ concatMap (shw (prec+1)) stmts ++ indent prec ++ "end\n"
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
   toString = shw 0
