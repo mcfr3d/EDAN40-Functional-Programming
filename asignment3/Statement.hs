@@ -4,6 +4,7 @@ import Parser hiding (T)
 import qualified Dictionary
 import qualified Expr
 type T = Statement
+type Statements = [Statement] 
 data Statement =
     Assignment String Expr.T |
     Skip |
@@ -14,7 +15,7 @@ data Statement =
     Begin Statements
     deriving Show
 
-type Statements = [Statement]    
+   
     
 assignment = token $ word #- accept ":=" # Expr.parse #- require ";" >-> buildAss 
 buildAss (v, e) = Assignment v e
@@ -38,6 +39,7 @@ begin = token $ accept "begin" -# iter parse #- require "end">-> buildBegin
 buildBegin s = Begin s
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
+exec [] _ _ = []
 exec (Assignment stringvar expr:stmts) dict input =
     exec stmts (Dictionary.insert (stringvar, Expr.value expr dict) dict) input 
 exec (Skip:stmts) dict input = exec stmts dict input
@@ -52,7 +54,6 @@ exec (While cond doStmts: stmts) dict input =
 exec (Read string:stmts) dict (x:xs) = exec stmts (Dictionary.insert (string,x) dict) xs
 exec (Write expr:stmts) dict input =  Expr.value expr dict : exec stmts dict input
 exec (Begin begStmts:stmts) dict input =exec (begStmts ++ stmts) dict input
---exec (Comment:stmts) dict input = exec stmts dict input
 
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
