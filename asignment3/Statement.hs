@@ -65,7 +65,7 @@ shw prec (If expr stmt elseStmt) =indent prec ++ "if " ++ Expr.toString expr ++ 
 shw prec (While expr stmt) =indent prec ++ "while " ++ Expr.toString expr ++ " do\n" ++ shw (prec+1) stmt 
 shw prec (Read string)=indent prec ++"read " ++ string ++ ";\n"
 shw prec (Write expr)=indent prec ++ "write " ++ Expr.toString expr ++ ";\n"
-shw prec (Begin (stmt:stmts)) = indent prec ++ "begin\n" ++ concatMap (shw (prec+1)) stmts ++ indent prec ++ "end\n"
+shw prec (Begin stmts) = indent prec ++ "begin\n" ++ concatMap (shw (prec+1)) stmts ++ indent prec ++ "end\n"
 instance Parse Statement where
   parse = assignment ! skip ! if_stmt ! while ! read_stmt ! write ! begin 
   toString = shw 0

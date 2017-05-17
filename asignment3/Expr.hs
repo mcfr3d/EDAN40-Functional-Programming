@@ -75,6 +75,7 @@ shw prec (Add t u) = parens (prec>5) (shw 5 t ++ "+" ++ shw 5 u)
 shw prec (Sub t u) = parens (prec>5) (shw 5 t ++ "-" ++ shw 6 u)
 shw prec (Mul t u) = parens (prec>6) (shw 6 t ++ "*" ++ shw 6 u)
 shw prec (Div t u) = parens (prec>6) (shw 6 t ++ "/" ++ shw 7 u)
+shw prec (Exp t u) = parens (prec>7) (shw 7 t ++ "^" ++ shw 8 u)
 
 value :: Expr -> Dictionary.T String Integer -> Integer
 value (Num n) _ = n
@@ -88,7 +89,8 @@ value (Mul t u) dict = (value t dict) * (value u dict)
 value (Div t u) dict 
         | (value u dict) == 0 = error "division by 0"
         | otherwise = (value t dict) `div`  (value u dict)
-
+value (Exp t u) dict = (value t dict) ^ (value u dict)
+        
 instance Parse Expr where
     parse = expr
     toString = shw 0
