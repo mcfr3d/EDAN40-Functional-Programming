@@ -24,7 +24,6 @@ m -# n = m # n >-> snd
 m #- n = m # n >-> fst
 
 spaces :: Parser String
---spaces =  space# iter space >-> cons
 spaces = iter space
 
 commentSymbolCheck ::Parser String
@@ -41,9 +40,6 @@ token m = lookingForComment -# m #- spaces #- lookingForComment
 
 space :: Parser Char
 space = char ? isSpace
-
---token :: Parser a -> Parser a
---token m = m #- spaces 
 
 letter :: Parser Char
 letter =  char ? isAlpha
